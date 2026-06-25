@@ -1,4 +1,4 @@
-module blog-server-stats
+module zhangdx.cn/blog-server-stats
 
 go 1.24
 

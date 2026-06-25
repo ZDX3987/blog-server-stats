@@ -1,7 +1,7 @@
 package main
 
 import (
-	"blog-server-stats/router"
+	"zhangdx.cn/blog-server-stats/router"
 
 	"github.com/gin-gonic/gin"
 )

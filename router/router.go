@@ -1,7 +1,7 @@
 package router
 
 import (
-	"blog-server-stats/readCount"
+	"zhangdx.cn/blog-server-stats/readCount"
 
 	"github.com/gin-gonic/gin"
 )
