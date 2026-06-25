@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"zhangdx.cn/blog-server-stats/rdb"
 )
 
 type ReadCountForm struct {
@@ -16,5 +17,7 @@ func Handler(c *gin.Context) {
 	var param ReadCountForm
 	c.ShouldBind(&param)
 	log.Printf("params: %s\n", param.ItemId)
-	c.JSON(http.StatusOK, gin.H{"msg": "OK"})
+	rdb.Set("itemId", param.ItemId)
+	val := rdb.Get("itemId")
+	c.JSON(http.StatusOK, gin.H{"msg": "OK", "redisVal": val})
 }
