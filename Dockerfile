@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS builder
+FROM crpi-k33rnujh6dmvkp4x-vpc.cn-shenzhen.personal.cr.aliyuncs.com/zhangdx-cn/golang:1.24.13-alpine3.23 AS builder
 WORKDIR /app
 ENV GOPROXY=https://goproxy.cn,direct
 
@@ -7,6 +7,8 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o blog-server-stats ./cmd/server
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o blog-server-stats .
+
+EXPOSE 8081
 
 ENTRYPOINT ["/app/blog-server-stats"]
