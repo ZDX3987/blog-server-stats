@@ -11,4 +11,4 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o blog-server-stats .
 
 EXPOSE 8081
 
-ENTRYPOINT ["/app/blog-server-stats"]
+ENTRYPOINT ["./app/blog-server-stats"]
