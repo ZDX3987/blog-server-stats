@@ -1,4 +1,4 @@
-FROM crpi-k33rnujh6dmvkp4x-vpc.cn-shenzhen.personal.cr.aliyuncs.com/zhangdx-cn/golang:1.24.13-alpine3.23 AS builder
+FROM crpi-k33rnujh6dmvkp4x.cn-shenzhen.personal.cr.aliyuncs.com/zhangdx-cn/golang:1.24.13-alpine3.23 AS builder
 WORKDIR /app
 ENV GOPROXY=https://goproxy.cn,direct
 
