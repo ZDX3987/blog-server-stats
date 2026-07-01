@@ -7,8 +7,8 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o blog-server-stats .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o blog-server-stats .
 
 EXPOSE 8081
 
-ENTRYPOINT ["./app/blog-server-stats"]
+ENTRYPOINT ["/app/blog-server-stats"]
