@@ -1,9 +1,8 @@
 package main
 
 import (
-	"zhangdx.cn/blog-server-stats/router"
-
 	"github.com/gin-gonic/gin"
+	"zhangdx.cn/blog-server-stats/internal/router"
 )
 
 func main() {
