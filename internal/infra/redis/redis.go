@@ -8,20 +8,17 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var RedisClient = initClient()
-
-func initClient() redis.Client {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "47.113.97.58:6379",
-		Password: "",
-		DB:       1,
-	})
-	return *client
+type RedisOperator struct {
+	client *redis.Client
 }
 
-func Get(key string) string {
+func NewRedisOperator(client *redis.Client) *RedisOperator {
+	return &RedisOperator{client: client}
+}
+
+func (operator *RedisOperator) Get(key string) string {
 	ctx := context.Background()
-	val, err := RedisClient.Get(ctx, key).Result()
+	val, err := operator.client.Get(ctx, key).Result()
 	if err != nil {
 		log.Fatalf("Error getting key %s: %v", key, err)
 	}
@@ -29,9 +26,9 @@ func Get(key string) string {
 	return val
 }
 
-func Set(key, value string) {
+func (operator *RedisOperator) Set(key, value string) {
 	ctx := context.Background()
-	val, err := RedisClient.Set(ctx, key, value, 20*time.Second).Result()
+	val, err := operator.client.Set(ctx, key, value, 20*time.Second).Result()
 	if err != nil {
 		log.Fatalf("Error set key %s: %v", key, err)
 	}

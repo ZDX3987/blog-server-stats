@@ -5,7 +5,7 @@ import (
 	"zhangdx.cn/blog-server-stats/internal/readcount/handler"
 )
 
-func Init(r *gin.Engine) {
+func Init(r *gin.Engine, readCountHandler *handler.ReadCountHandler) {
 	stat := r.Group("/api/stat")
-	stat.POST("/read", handler.Handler)
+	stat.POST("/read", readCountHandler.SubmitReadRequest)
 }

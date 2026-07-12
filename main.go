@@ -1,12 +1,7 @@
 package main
 
-import (
-	"github.com/gin-gonic/gin"
-	"zhangdx.cn/blog-server-stats/internal/router"
-)
+import "zhangdx.cn/blog-server-stats/internal/bootstrap"
 
 func main() {
-	r := gin.Default()
-	router.Init(r)
-	r.Run(":8081")
+	bootstrap.NewApp()
 }

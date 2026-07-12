@@ -19,3 +19,7 @@ type ReadCountLog struct {
 	ReadDepth    int
 	CreatedAt    time.Time
 }
+
+type ReadCountForm struct {
+	ItemId string `json:"itemId"`
+}
