@@ -8,7 +8,7 @@ import (
 )
 
 type Handler struct {
-	readCountService *Service
+	service *Service
 }
 
 func NewReadCountHandler(readCountService *Service) *Handler {
@@ -18,11 +18,17 @@ func NewReadCountHandler(readCountService *Service) *Handler {
 func (rch *Handler) SubmitReadRequest(c *gin.Context) {
 	var readCountRequest ReadCountRequest
 	c.ShouldBindJSON(&readCountRequest)
-	readCountRequest.IP = c.ClientIP()
-	err := rch.readCountService.SaveReadCountRequest(&readCountRequest)
+	fillHttpRequestParam(c, &readCountRequest)
+	err := rch.service.SaveReadCountRequest(&readCountRequest)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, api.Fail(err.Error()))
 	} else {
 		c.JSON(http.StatusOK, api.Success())
 	}
+}
+
+func fillHttpRequestParam(c *gin.Context, request *ReadCountRequest) {
+	request.IP = c.ClientIP()
+	request.UserID = c.Request.UserAgent()
+	request.Referer = c.Request.Referer()
 }

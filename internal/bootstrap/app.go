@@ -9,8 +9,10 @@ import (
 
 func NewApp() {
 	redisClient := NewRedisClient()
+	mysqlClient := NewMySQLClient()
 	redisOperator := infra.NewRedisOperator(redisClient)
-	readCountService := readcount.NewReadCountService(redisOperator)
+	readCountRepository := readcount.NewRepository(mysqlClient)
+	readCountService := readcount.NewReadCountService(redisOperator, readCountRepository)
 	readCountHandler := readcount.NewReadCountHandler(readCountService)
 	r := gin.Default()
 	router.Init(r, readCountHandler)
