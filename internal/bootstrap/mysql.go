@@ -2,25 +2,36 @@ package bootstrap
 
 import (
 	"database/sql"
-	"time"
+	"fmt"
+	"net/url"
 
 	_ "github.com/go-sql-driver/mysql"
+	"zhangdx.cn/blog-server-stats/internal/config"
 )
 
-func NewMySQLClient() *sql.DB {
-	dsn := "zhangdx:Zz196810486@tcp(rm-wz9y4w067z3i4u1tr1o.mysql.rds.aliyuncs.com)/zhangdx_blog?charset=utf8mb4&parseTime=True&loc=Local"
-
-	db, err := sql.Open("mysql", dsn)
+func NewMySQLClient(c config.MySQLConfig) *sql.DB {
+	db, err := sql.Open("mysql", dsn(c))
 	if err != nil {
 		panic(err)
 	}
-	db.SetMaxOpenConns(50)
-	db.SetMaxIdleConns(10)
-	db.SetConnMaxLifetime(time.Hour)
+	db.SetMaxOpenConns(c.MaxOpenConns)
+	db.SetMaxIdleConns(c.MaxIdleConns)
+	db.SetConnMaxLifetime(c.ConnMaxLifetime)
 
 	if err := db.Ping(); err != nil {
 		panic(err)
 	}
-
 	return db
+}
+
+func dsn(c config.MySQLConfig) string {
+	params := url.Values{}
+	params.Set("charset", c.Charset)
+	params.Set("parseTime", "True")
+	params.Set("loc", "Local")
+
+	return fmt.Sprintf(
+		"%s:%s@tcp(%s:%d)/%s?%s",
+		c.Username, c.Password, c.Host, c.Port, c.Database, params.Encode(),
+	)
 }

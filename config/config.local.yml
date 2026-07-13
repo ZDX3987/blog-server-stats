@@ -1,0 +1,38 @@
+# config/config.local.yml
+
+app:
+  name: blog-server-stats
+  env: local
+  port: 8081
+  debug: true
+
+server:
+  read_timeout: 10s
+  write_timeout: 10s
+  idle_timeout: 60s
+  shutdown_timeout: 10s
+
+log:
+  level: debug
+  format: console
+  output: stdout
+
+mysql:
+  host: rm-wz9y4w067z3i4u1tr1o.mysql.rds.aliyuncs.com
+  port: 3306
+  username: zhangdx
+  password: "Zz196810486"
+  database: zhangdx_blog
+  charset: utf8mb4
+  max_open_conns: 50
+  max_idle_conns: 10
+  conn_max_lefttime: 1h
+
+redis:
+  addr: 47.113.97.58:6379
+  password: ""
+  db: 1
+  pool_size: 20
+  dial_timeout: 3s
+  read_timeout: 2s
+  write_timeout: 2s
