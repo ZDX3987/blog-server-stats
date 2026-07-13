@@ -2,7 +2,9 @@ package readcount
 
 import (
 	"fmt"
+	"time"
 
+	"zhangdx.cn/blog-server-stats/internal/apperror"
 	"zhangdx.cn/blog-server-stats/internal/infra"
 )
 
@@ -15,17 +17,22 @@ func NewReadCountService(redisOperator *infra.RedisOperator, repo *Repository) *
 	return &Service{redisOperator, repo}
 }
 
-func (rcs *Service) SaveReadCountRequest(request *ReadCountRequest) error {
+func (rcs *Service) SaveReadCountRequest(request *ReadCountRequest) (bool, *apperror.Error) {
 	if request.ItemID == "" {
-		return fmt.Errorf("目标ID参数不能为空")
+		return false, apperror.BusinessError("目标ID参数不能为空")
 	}
 	if !rcs.repository.IsValid(request.ItemID) {
-		return fmt.Errorf("目标ID不是有效的")
+		return false, apperror.BusinessError("目标ID不是有效的")
 	}
 	if !isValidRead(request.ReadDuration, request.ScrollDepth) {
-		return nil
+		return false, nil
 	}
-	return nil
+	dedupKey := fmt.Sprintf("article:read:dedup:%s:%s", request.ItemID, request.Identity)
+	ok := rcs.redisOperator.SetNx(dedupKey, "1", 30*time.Minute)
+	if !ok {
+		return false, nil
+	}
+	return true, nil
 }
 
 func isValidRead(duration int, depth int) bool {

@@ -8,6 +8,6 @@ import (
 
 func Init(r *gin.Engine, readCountHandler *readcount.Handler) {
 	stat := r.Group("/api/stat")
-	stat.Use(middleware.VisitorMiddleware())
+	stat.Use(middleware.VisitorMiddleware(), middleware.ErrorMiddleware())
 	stat.POST("/read", readCountHandler.SubmitReadRequest)
 }

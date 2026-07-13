@@ -17,18 +17,19 @@ func NewReadCountHandler(readCountService *Service) *Handler {
 
 func (rch *Handler) SubmitReadRequest(c *gin.Context) {
 	var readCountRequest ReadCountRequest
-	c.ShouldBindJSON(&readCountRequest)
+	_ = c.ShouldBindJSON(&readCountRequest)
 	fillHttpRequestParam(c, &readCountRequest)
-	err := rch.service.SaveReadCountRequest(&readCountRequest)
+	result, err := rch.service.SaveReadCountRequest(&readCountRequest)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, api.Fail(err.Error()))
+		_ = c.Error(err)
 	} else {
-		c.JSON(http.StatusOK, api.Success())
+		c.JSON(http.StatusOK, api.SuccessResult(result))
 	}
 }
 
 func fillHttpRequestParam(c *gin.Context, request *ReadCountRequest) {
 	request.IP = c.ClientIP()
-	request.UserID = c.Request.UserAgent()
+	request.UserAgent = c.Request.UserAgent()
 	request.Referer = c.Request.Referer()
+	request.Identity = BuildIdentity(c)
 }

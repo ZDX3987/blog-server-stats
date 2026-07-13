@@ -39,9 +39,9 @@ func (operator *RedisOperator) SetNx(key, value string, expire time.Duration) bo
 	ctx := context.Background()
 	val, err := operator.client.SetNX(ctx, key, value, expire).Result()
 	if err != nil {
-		log.Fatalf("Error set key %s: %v", key, err)
+		log.Fatalf("set redis nx error key:%s, %v", key, err)
 		return false
 	}
-	log.Printf("set redis value: %s\n", val)
+	log.Printf("set redis key: %s, value: %v\n", key, val)
 	return val
 }
