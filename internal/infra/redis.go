@@ -26,11 +26,22 @@ func (operator *RedisOperator) Get(key string) string {
 	return val
 }
 
-func (operator *RedisOperator) Set(key, value string) {
+func (operator *RedisOperator) Set(key, value string, expire time.Duration) {
 	ctx := context.Background()
-	val, err := operator.client.Set(ctx, key, value, 20*time.Second).Result()
+	val, err := operator.client.Set(ctx, key, value, expire).Result()
 	if err != nil {
 		log.Fatalf("Error set key %s: %v", key, err)
 	}
 	log.Printf("set redis value: %s\n", val)
+}
+
+func (operator *RedisOperator) SetNx(key, value string, expire time.Duration) bool {
+	ctx := context.Background()
+	val, err := operator.client.SetNX(ctx, key, value, expire).Result()
+	if err != nil {
+		log.Fatalf("Error set key %s: %v", key, err)
+		return false
+	}
+	log.Printf("set redis value: %s\n", val)
+	return val
 }

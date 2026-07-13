@@ -5,19 +5,22 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 const VisitorIdCookieName = "visitor_id"
+const visitorIdPrefix = "v_"
+const maxVisitorIdAge = 365 * 24 * time.Hour
+const cookieDomain = "zhangdx.cn"
 
 func VisitorMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		visitorId, err := context.Cookie(VisitorIdCookieName)
 		if err != nil || visitorId == "" {
-			// TODO 未完成visitorID定义
-			visitorId = "v_"
-			maxAge := int((365 * 24 * time.Hour).Seconds())
+			visitorId = visitorIdPrefix + uuid.NewString()
+			maxAge := int(maxVisitorIdAge.Seconds())
 			context.SetSameSite(http.SameSiteLaxMode)
-			context.SetCookie(VisitorIdCookieName, visitorId, maxAge, "/", "", false, true)
+			context.SetCookie(VisitorIdCookieName, visitorId, maxAge, "/", cookieDomain, false, true)
 		}
 		context.Set(VisitorIdCookieName, visitorId)
 		context.Next()

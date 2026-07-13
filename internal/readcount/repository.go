@@ -17,11 +17,16 @@ type validItemCount struct {
 }
 
 func (repo *Repository) IsValid(itemId string) bool {
-	result, err := repo.db.Query("select count(article_id) valid_count from article where article_id = ?", itemId)
+	result, err := repo.db.Query("SELECT COUNT(article_id) valid_count FROM article WHERE article_id = ?", itemId)
 	if err != nil {
 		return false
 	}
-	defer result.Close()
+	defer func(result *sql.Rows) {
+		err := result.Close()
+		if err != nil {
+			return
+		}
+	}(result)
 	var validCount validItemCount
 
 	for result.Next() {
