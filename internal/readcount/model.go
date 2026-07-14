@@ -6,7 +6,7 @@ type ReadCountLog struct {
 	Id           int64
 	ItemId       string
 	Identity     string
-	VisitorId    string
+	VisitorID    string
 	VisitorIp    string
 	UserAgent    string
 	Referer      string

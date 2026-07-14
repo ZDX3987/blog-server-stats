@@ -1,6 +1,7 @@
 package readcount
 
 import (
+	"context"
 	"database/sql"
 )
 
@@ -16,8 +17,8 @@ type validItemCount struct {
 	count int
 }
 
-func (repo *Repository) IsValid(itemId string) bool {
-	result, err := repo.db.Query("SELECT COUNT(article_id) valid_count FROM article WHERE article_id = ?", itemId)
+func (repo *Repository) IsValid(ctx context.Context, itemId string) bool {
+	result, err := repo.db.QueryContext(ctx, "SELECT COUNT(article_id) valid_count FROM article WHERE article_id = ?", itemId)
 	if err != nil {
 		return false
 	}
@@ -40,4 +41,17 @@ func (repo *Repository) IsValid(itemId string) bool {
 		return false
 	}
 	return validCount.count > 0
+}
+
+func (repo *Repository) InsertReadLog(ctx context.Context, log *ReadCountLog) (bool, error) {
+	query := `
+INSERT INTO read_count_log(item_id, item_type, identity, visitor_id, visitor_ip, user_agent, referer, read_duration, read_depth)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, )
+`
+	result, err := repo.db.ExecContext(ctx, query, log.ItemId, 1, log.Identity, log.VisitorID, log.VisitorIp, log.UserAgent, log.Referer, log.ReadDuration, log.ReadDepth)
+	if err != nil {
+		return false, err
+	}
+	rowNum, err := result.RowsAffected()
+	return rowNum > 0, err
 }

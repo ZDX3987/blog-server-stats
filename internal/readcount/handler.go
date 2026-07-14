@@ -16,10 +16,14 @@ func NewReadCountHandler(readCountService *Service) *Handler {
 }
 
 func (rch *Handler) SubmitReadRequest(c *gin.Context) {
+	ctx := c.Request.Context()
 	var readCountRequest ReadCountRequest
-	_ = c.ShouldBindJSON(&readCountRequest)
+	if err := c.ShouldBindJSON(&readCountRequest); err != nil {
+		_ = c.Error(err)
+		return
+	}
 	fillHttpRequestParam(c, &readCountRequest)
-	result, err := rch.service.SaveReadCountRequest(&readCountRequest)
+	result, err := rch.service.SaveReadCountRequest(ctx, &readCountRequest)
 	if err != nil {
 		_ = c.Error(err)
 	} else {
@@ -32,4 +36,7 @@ func fillHttpRequestParam(c *gin.Context, request *ReadCountRequest) {
 	request.UserAgent = c.Request.UserAgent()
 	request.Referer = c.Request.Referer()
 	request.Identity = BuildIdentity(c)
+	if v, exists := c.Get(visitorIdKey); exists {
+		request.VisitorID = v.(string)
+	}
 }

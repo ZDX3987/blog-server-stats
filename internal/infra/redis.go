@@ -16,8 +16,7 @@ func NewRedisOperator(client *redis.Client) *RedisOperator {
 	return &RedisOperator{client: client}
 }
 
-func (operator *RedisOperator) Get(key string) string {
-	ctx := context.Background()
+func (operator *RedisOperator) Get(ctx context.Context, key string) string {
 	val, err := operator.client.Get(ctx, key).Result()
 	if err != nil {
 		log.Fatalf("Error getting key %s: %v", key, err)
@@ -26,8 +25,7 @@ func (operator *RedisOperator) Get(key string) string {
 	return val
 }
 
-func (operator *RedisOperator) Set(key, value string, expire time.Duration) {
-	ctx := context.Background()
+func (operator *RedisOperator) Set(ctx context.Context, key, value string, expire time.Duration) {
 	val, err := operator.client.Set(ctx, key, value, expire).Result()
 	if err != nil {
 		log.Fatalf("Error set key %s: %v", key, err)
@@ -35,13 +33,13 @@ func (operator *RedisOperator) Set(key, value string, expire time.Duration) {
 	log.Printf("set redis value: %s\n", val)
 }
 
-func (operator *RedisOperator) SetNx(key, value string, expire time.Duration) bool {
-	ctx := context.Background()
+func (operator *RedisOperator) SetNx(ctx context.Context, key, value string, expire time.Duration) (bool, error) {
 	val, err := operator.client.SetNX(ctx, key, value, expire).Result()
-	if err != nil {
-		log.Fatalf("set redis nx error key:%s, %v", key, err)
-		return false
-	}
 	log.Printf("set redis key: %s, value: %v\n", key, val)
-	return val
+	return val, err
+}
+
+func (operator *RedisOperator) AddSet(ctx context.Context, key, value string, expire time.Duration) (bool, error) {
+	val, err := operator.client.SAdd(ctx, key, value, expire).Result()
+	return val == 1, err
 }
