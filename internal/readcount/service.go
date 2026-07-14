@@ -33,10 +33,17 @@ func (rcs *Service) SaveReadCountRequest(ctx context.Context, request *ReadCount
 	if !ok || err != nil {
 		return false, err
 	}
+	countKey := fmt.Sprintf("article:read:count:%s", request.ItemID)
+	err = rcs.redisOperator.Incr(ctx, countKey)
+	if err != nil {
+		return false, err
+	}
+
 	ok, err = rcs.redisOperator.AddSet(ctx, "article:read:dirty", request.ItemID, 30*time.Minute)
 	if !ok || err != nil {
 		return false, err
 	}
+
 	log := &ReadCountLog{
 		ItemId:       request.ItemID,
 		Identity:     request.Identity,

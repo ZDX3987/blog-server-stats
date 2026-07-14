@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"zhangdx.cn/blog-server-stats/internal/config"
 	"zhangdx.cn/blog-server-stats/internal/infra"
+	"zhangdx.cn/blog-server-stats/internal/job"
 	"zhangdx.cn/blog-server-stats/internal/readcount"
 	"zhangdx.cn/blog-server-stats/internal/router"
 )
@@ -33,6 +35,10 @@ func NewApp() error {
 	readCountRepository := readcount.NewRepository(mysqlClient)
 	readCountService := readcount.NewReadCountService(redisOperator, readCountRepository)
 	readCountHandler := readcount.NewReadCountHandler(readCountService)
+
+	syncJob := job.NewReadCountSyncJob(redisOperator, readCountRepository)
+	syncJob.Start(context.Background())
+
 	r := gin.Default()
 	setGinMode(env)
 	router.Init(r, readCountHandler)

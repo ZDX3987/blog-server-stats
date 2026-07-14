@@ -55,3 +55,12 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, )
 	rowNum, err := result.RowsAffected()
 	return rowNum > 0, err
 }
+
+func (repo *Repository) UpdateReadCount(ctx context.Context, itemID string, count int64) error {
+	if count == 0 {
+		return nil
+	}
+	s := "UPDATE article SET read_count = read_count + ? WHERE article_id = ?"
+	_, err := repo.db.ExecContext(ctx, s, count, itemID)
+	return err
+}
