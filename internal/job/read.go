@@ -34,11 +34,13 @@ func (job *ReadCountSyncJob) Start(ctx context.Context) {
 }
 
 func (job *ReadCountSyncJob) runSyncTask(ctx context.Context) error {
+	log.Printf("runSyncTask start")
 	ids, err := job.redisOperator.Client.HKeys(ctx, readcount.ReadCountKey).Result()
 	if err != nil {
 		log.Fatalf("runSyncTask get read count map error: %v\n", err)
 		return err
 	}
+	log.Printf("runSyncTask read count size: %v\n", len(ids))
 	for _, id := range ids {
 		val, err := job.redisOperator.Client.HGetDel(ctx, readcount.ReadCountKey, id).Result()
 		if len(val) == 0 || err != nil {
@@ -54,5 +56,6 @@ func (job *ReadCountSyncJob) runSyncTask(ctx context.Context) error {
 			continue
 		}
 	}
+	log.Printf("runSyncTask end")
 	return nil
 }
