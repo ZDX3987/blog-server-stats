@@ -18,12 +18,12 @@ type ReadCountLog struct {
 type ReadCountRequest struct {
 	ItemID       string `json:"itemId"`
 	ItemType     int    `json:"itemType"`
-	Identity     string `json:"identity"`
+	Identity     string
 	VisitorID    string `json:"visitorId"`
 	UserID       string `json:"userId"`
-	IP           string `json:"ip"`
-	UserAgent    string `json:"userAgent"`
-	Referer      string `json:"referer"`
-	ReadDuration int    `json:"readDuration"`
-	ScrollDepth  int    `json:"scrollDepth"`
+	IP           string
+	UserAgent    string
+	Referer      string
+	ReadDuration int `json:"readDuration"`
+	ScrollDepth  int `json:"scrollDepth"`
 }

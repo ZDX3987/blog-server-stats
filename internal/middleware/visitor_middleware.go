@@ -20,7 +20,7 @@ func VisitorMiddleware() gin.HandlerFunc {
 			visitorId = visitorIdPrefix + uuid.NewString()
 			maxAge := int(maxVisitorIdAge.Seconds())
 			context.SetSameSite(http.SameSiteLaxMode)
-			context.SetCookie(VisitorIdCookieName, visitorId, maxAge, "/", cookieDomain, false, true)
+			context.SetCookie(VisitorIdCookieName, visitorId, maxAge, "/", "", false, true)
 		}
 		context.Set(VisitorIdCookieName, visitorId)
 		context.Next()

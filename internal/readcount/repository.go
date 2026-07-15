@@ -46,7 +46,7 @@ func (repo *Repository) IsValid(ctx context.Context, itemId string) bool {
 func (repo *Repository) InsertReadLog(ctx context.Context, log *ReadCountLog) (bool, error) {
 	query := `
 INSERT INTO read_count_log(item_id, item_type, identity, visitor_id, visitor_ip, user_agent, referer, read_duration, read_depth)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, )
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 	result, err := repo.db.ExecContext(ctx, query, log.ItemId, 1, log.Identity, log.VisitorID, log.VisitorIp, log.UserAgent, log.Referer, log.ReadDuration, log.ReadDepth)
 	if err != nil {
