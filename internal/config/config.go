@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -59,6 +60,7 @@ type RedisConfig struct {
 }
 
 func Load(configPath, env string) (*Config, error) {
+	log.Printf("Load config from path: %s, env: %s", configPath, env)
 	v := viper.New()
 	if configPath != "" {
 		v.SetConfigFile(configPath)
