@@ -56,7 +56,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, )
 	return rowNum > 0, err
 }
 
-func (repo *Repository) UpdateReadCount(ctx context.Context, itemID string, count int64) error {
+func (repo *Repository) IncrReadCount(ctx context.Context, itemID string, count int64) error {
 	if count == 0 {
 		return nil
 	}

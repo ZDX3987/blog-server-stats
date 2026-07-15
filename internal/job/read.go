@@ -2,7 +2,6 @@ package job
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -35,26 +34,22 @@ func (job *ReadCountSyncJob) Start(ctx context.Context) {
 }
 
 func (job *ReadCountSyncJob) runSyncTask(ctx context.Context) error {
-	itemIds, err := job.redisOperator.ListSet(ctx, "article:read:dirty")
+	ids, err := job.redisOperator.Client.HKeys(ctx, readcount.ReadCountKey).Result()
 	if err != nil {
+		log.Fatalf("runSyncTask get read count map error: %v\n", err)
 		return err
 	}
-	for _, id := range itemIds {
-		countKey := fmt.Sprintf("article:read:count:%s", id)
-		val, err := job.redisOperator.Get(ctx, countKey)
-		if err != nil {
+	for _, id := range ids {
+		val, err := job.redisOperator.Client.HGetDel(ctx, readcount.ReadCountKey, id).Result()
+		if len(val) == 0 || err != nil {
 			continue
 		}
-		readCount, err := strconv.ParseInt(val, 10, 64)
+		readCount, err := strconv.ParseInt(val[0], 10, 64)
 		if err != nil {
 			continue
 		}
 		log.Printf("update read count itemID: %s, count: %d\n", id, readCount)
-		err = job.repository.UpdateReadCount(ctx, id, readCount)
-		if err != nil {
-			continue
-		}
-		err = job.redisOperator.Del(ctx, countKey)
+		err = job.repository.IncrReadCount(ctx, id, readCount)
 		if err != nil {
 			continue
 		}

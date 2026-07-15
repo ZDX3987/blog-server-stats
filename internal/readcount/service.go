@@ -28,19 +28,16 @@ func (rcs *Service) SaveReadCountRequest(ctx context.Context, request *ReadCount
 	if !isValidRead(request.ReadDuration, request.ScrollDepth) {
 		return false, nil
 	}
+
 	dedupKey := fmt.Sprintf("article:read:dedup:%s:%s", request.ItemID, request.Identity)
 	ok, err := rcs.redisOperator.SetNx(ctx, dedupKey, "1", 30*time.Minute)
 	if !ok || err != nil {
 		return false, err
 	}
-	countKey := fmt.Sprintf("article:read:count:%s", request.ItemID)
-	err = rcs.redisOperator.Incr(ctx, countKey)
-	if err != nil {
-		return false, err
-	}
 
-	ok, err = rcs.redisOperator.AddSet(ctx, "article:read:dirty", request.ItemID, 30*time.Minute)
-	if !ok || err != nil {
+	// 增加阅读数量
+	_, err = rcs.redisOperator.Client.HIncrBy(ctx, ReadCountKey, request.ItemID, 1).Result()
+	if err != nil {
 		return false, err
 	}
 
