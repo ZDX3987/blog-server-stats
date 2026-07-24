@@ -20,7 +20,7 @@ func NewReadCountSyncJob(r *infra.RedisOperator, repo *readcount.Repository) *Re
 }
 
 func (job *ReadCountSyncJob) Start(ctx context.Context) {
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(5 * time.Minute)
 	go func() {
 		for {
 			select {

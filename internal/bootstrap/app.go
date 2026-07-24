@@ -11,6 +11,7 @@ import (
 	"zhangdx.cn/blog-server-stats/internal/config"
 	"zhangdx.cn/blog-server-stats/internal/infra"
 	"zhangdx.cn/blog-server-stats/internal/job"
+	"zhangdx.cn/blog-server-stats/internal/pageview"
 	"zhangdx.cn/blog-server-stats/internal/readcount"
 	"zhangdx.cn/blog-server-stats/internal/router"
 )
@@ -36,12 +37,16 @@ func NewApp() error {
 	readCountService := readcount.NewReadCountService(redisOperator, readCountRepository)
 	readCountHandler := readcount.NewReadCountHandler(readCountService)
 
+	pageViewRepository := pageview.NewRepository(mysqlClient)
+	pageViewService := pageview.NewService(pageViewRepository)
+	pageViewHandler := pageview.NewHandler(pageViewService)
+
 	syncJob := job.NewReadCountSyncJob(redisOperator, readCountRepository)
 	syncJob.Start(context.Background())
 
 	setGinMode(env)
 	r := gin.Default()
-	router.Init(r, readCountHandler)
+	router.Init(r, readCountHandler, pageViewHandler)
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.App.Port),
 		Handler:      r,

@@ -3,12 +3,13 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"zhangdx.cn/blog-server-stats/internal/middleware"
+	"zhangdx.cn/blog-server-stats/internal/pageview"
 	"zhangdx.cn/blog-server-stats/internal/readcount"
 )
 
-func Init(r *gin.Engine, readCountHandler *readcount.Handler) {
+func Init(r *gin.Engine, readCountHandler *readcount.Handler, pageViewHandler *pageview.Handler) {
 	stat := r.Group("/api/stats")
 	stat.Use(middleware.VisitorMiddleware(), middleware.ErrorMiddleware())
 	stat.POST("/read", readCountHandler.SubmitReadRequest)
-	stat.POST("/page-view")
+	stat.POST("/page-view", pageViewHandler.SubmitPageViewHandler)
 }

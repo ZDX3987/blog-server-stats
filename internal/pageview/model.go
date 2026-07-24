@@ -1,5 +1,7 @@
 package pageview
 
+import "time"
+
 type PageView struct {
 	ID             int
 	EventID        string
@@ -10,15 +12,25 @@ type PageView struct {
 	IP             string
 	DurationSec    int
 	MaxScrollDepth uint8
+	OccurredAt     time.Time
 }
 
 type PageViewRequest struct {
-	EventID        string `json:"event_id"`
+	EventID        string `json:"eventId"`
 	VisitorID      string
 	Path           string `json:"path"`
 	Referer        string
 	UserAgent      string
 	IP             string
-	DurationSec    int   `json:"duration_sec"`
-	MaxScrollDepth uint8 `json:"max_scroll_depth"`
+	DurationSec    int       `json:"durationSec"`
+	MaxScrollDepth uint8     `json:"maxScrollDepth"`
+	OccurredAt     time.Time `json:"occurredAt"`
+}
+
+type PageViewMultiRequest struct {
+	VisitorID string
+	Referer   string
+	UserAgent string
+	IP        string
+	Request   []PageViewRequest
 }

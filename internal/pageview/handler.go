@@ -11,16 +11,22 @@ type Handler struct {
 	pgv *Service
 }
 
+func NewHandler(pgv *Service) *Handler {
+	return &Handler{pgv: pgv}
+}
+
 func (h *Handler) SubmitPageViewHandler(c *gin.Context) {
 	ctx := c.Request.Context()
-	var pv PageViewRequest
-	err := c.ShouldBindJSON(pv)
+	var mpv PageViewMultiRequest
+	var prList []PageViewRequest
+	err := c.ShouldBindJSON(&prList)
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
-	fillHttpRequestParam(c, &pv)
-	_, err = h.pgv.SubmitPageView(ctx, &pv)
+	mpv.Request = prList
+	fillHttpRequestParam(c, &mpv)
+	_, err = h.pgv.SubmitPageView(ctx, &mpv)
 	if err != nil {
 		_ = c.Error(err)
 	} else {
@@ -28,7 +34,7 @@ func (h *Handler) SubmitPageViewHandler(c *gin.Context) {
 	}
 }
 
-func fillHttpRequestParam(c *gin.Context, request *PageViewRequest) {
+func fillHttpRequestParam(c *gin.Context, request *PageViewMultiRequest) {
 	request.IP = c.ClientIP()
 	request.UserAgent = c.Request.UserAgent()
 	request.Referer = c.Request.Referer()
