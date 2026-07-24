@@ -39,8 +39,8 @@ func NewApp() error {
 	syncJob := job.NewReadCountSyncJob(redisOperator, readCountRepository)
 	syncJob.Start(context.Background())
 
-	r := gin.Default()
 	setGinMode(env)
+	r := gin.Default()
 	router.Init(r, readCountHandler)
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.App.Port),

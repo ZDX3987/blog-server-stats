@@ -26,7 +26,7 @@ mysql:
   charset: utf8mb4
   max_open_conns: 50
   max_idle_conns: 10
-  conn_max_lefttime: 1h
+  conn_max_lifetime: 1h
 
 redis:
   addr: 47.113.97.58:6379
